@@ -1,0 +1,52 @@
+{% extends "blog/base.html" %}
+{% block content %}
+    <article class="media content-section">
+        <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
+        <div class="media-body">
+        <div class="article-metadata">
+            <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
+            <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
+            {% if user == object.author %}
+                <div>
+                    <a class="btn btn-outline-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Update</a>
+                    <a class="btn btn-outline-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Delete</a>
+                </div>
+            {% endif %}
+        </div>
+            <h2 class="article-title">{{ object.title }}</h2>
+            <p class="article-content">{{ object.content }}</p>
+            {% ifequal 1 object.votes %}
+                <small class="text-muted">{{ object.votes }} vote</small>
+            {% endifequal %}
+            {% ifnotequal 1 object.votes %}
+                <small class="text-muted">{{ object.votes }} votes</small>
+            {% endifnotequal %}
+            <div>
+                <a class="btn btn-outline-info btn-sm mt-1 mb-1" href="{% url 'post-vote' object.id 1 %}">Upvote</a>
+                <a class="btn btn-outline-danger btn-sm mt-1 mb-1" href="{% url 'post-vote' object.id 0 %}">Downvote</a> 
+            </div>
+        </div>
+    </article>
+    <h3 class="article-title">Comments</h3>
+    <a class="btn btn-dark btn-sm mt-1 mb-1" href="{% url 'post-comment' object.id %}">Comment</a>
+    {% for object in comments %}
+        <article class="media content-section">
+            <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
+            <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
+                <small class="text-muted">{{ object.get_time }}</small>
+            </div>
+                <p class="article-content">{{ object.content }}</p>
+                {% ifequal 1 object.votes %}
+                    <small class="text-muted">{{ object.votes }} vote</small>
+                {% endifequal %}
+                {% ifnotequal 1 object.votes %}
+                    <small class="text-muted">{{ object.votes }} votes</small>
+                {% endifnotequal %}
+            </div>
+        </article>
+    {% empty %}
+        <p>There are no comments yet.</p>
+    {% endfor %}
+{% endblock content %}
